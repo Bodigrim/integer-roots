@@ -6,11 +6,10 @@ license:       MIT
 license-file:  LICENSE
 copyright:     (c) 2011 Daniel Fischer, 2016-2020 Andrew Lelechenko.
 maintainer:    Andrew Lelechenko andrew dot lelechenko at gmail dot com
-stability:     Provisional
 homepage:      https://github.com/Bodigrim/integer-roots
 bug-reports:   https://github.com/Bodigrim/integer-roots/issues
-synopsis:      Integer roots
-description:   Calculating integer roots and testing perfect powers of arbitrary precision.
+synopsis:      Integer roots and perfect powers
+description:   Calculating integer roots and testing perfect powers of arbitrary precision. Originally part of <https://hackage.haskell.org/package/arithmoi arithmoi> package.
 category:      Math, Algorithms, Number Theory
 author:        Daniel Fischer, Andrew Lelechenko
 tested-with:   GHC ==8.0.2 GHC ==8.2.2 GHC ==8.4.4 GHC ==8.6.5 GHC ==8.8.3
