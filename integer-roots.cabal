@@ -13,7 +13,7 @@ synopsis:      Integer roots
 description:   Calculating integer roots and testing perfect powers of arbitrary precision.
 category:      Math, Algorithms, Number Theory
 author:        Daniel Fischer, Andrew Lelechenko
-tested-with:   GHC ==8.0.2 GHC ==8.2.2 GHC ==8.4.4 GHC ==8.6.5 GHC ==8.8.1
+tested-with:   GHC ==8.0.2 GHC ==8.2.2 GHC ==8.4.4 GHC ==8.6.5 GHC ==8.8.3
 extra-source-files:
   changelog.md
   README.md

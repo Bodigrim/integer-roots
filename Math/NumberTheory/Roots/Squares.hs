@@ -151,10 +151,6 @@ isSquare' n
 --   easily without division and eliminates about 82% of all numbers).
 --   After that, the remainders modulo 9, 25, 7, 11 and 13 are tested
 --   to eliminate altogether about 99.436% of all numbers.
---
---   This is the test used by 'exactSquareRoot'. For large numbers,
---   the slower but more discriminating test 'isPossibleSquare2' is
---   faster.
 {-# SPECIALISE isPossibleSquare :: Int -> Bool,
                                    Word -> Bool,
                                    Integer -> Bool,
