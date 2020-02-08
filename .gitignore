@@ -1,0 +1,7 @@
+*.hi
+*.o
+stack.yaml
+dist
+dist-newstyle
+.ghc.environment*
+.tasty-rerun-log
