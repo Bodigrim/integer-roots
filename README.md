@@ -37,7 +37,7 @@ However, this implementation is faulty:
 ```haskell
 > integerSquareRoot (3037000502^2)
 3037000501
-> isqrt (2^1024) == 2^1024
+> integerSquareRoot (2^1024) == 2^1024
 True
 ```
 
