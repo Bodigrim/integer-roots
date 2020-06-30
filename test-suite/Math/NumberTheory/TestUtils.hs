@@ -38,7 +38,7 @@ module Math.NumberTheory.TestUtils
 import Test.SmallCheck.Series (Positive(..), NonNegative(..), Serial(..))
 import Test.Tasty
 import Test.Tasty.SmallCheck as SC
-import Test.Tasty.QuickCheck as QC hiding (Positive, getPositive, NonNegative, generate, getNonNegative)
+import Test.Tasty.QuickCheck as QC hiding (Positive(..), NonNegative(..), generate)
 
 import Data.Bits
 import Data.Int

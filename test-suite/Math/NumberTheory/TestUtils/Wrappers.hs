@@ -27,7 +27,7 @@ module Math.NumberTheory.TestUtils.Wrappers
 import Control.Applicative
 import Data.Functor.Classes
 
-import Test.Tasty.QuickCheck as QC hiding (Positive, NonNegative, generate, getNonNegative, getPositive)
+import Test.Tasty.QuickCheck as QC hiding (Positive(..), NonNegative(..))
 import Test.SmallCheck.Series (Positive(..), NonNegative(..), Serial(..), Series)
 
 -------------------------------------------------------------------------------
@@ -51,15 +51,9 @@ instance Show1 AnySign where
 -------------------------------------------------------------------------------
 -- Positive from smallcheck
 
-deriving instance Functor Positive
-
 instance (Num a, Ord a, Arbitrary a) => Arbitrary (Positive a) where
   arbitrary = Positive <$> (arbitrary `suchThat` (> 0))
   shrink (Positive x) = Positive <$> filter (> 0) (shrink x)
-
-instance (Num a, Bounded a) => Bounded (Positive a) where
-  minBound = Positive 1
-  maxBound = Positive (maxBound :: a)
 
 instance Eq1 Positive where
   liftEq eq (Positive a) (Positive b) = a `eq` b
@@ -73,15 +67,9 @@ instance Show1 Positive where
 -------------------------------------------------------------------------------
 -- NonNegative from smallcheck
 
-deriving instance Functor NonNegative
-
 instance (Num a, Ord a, Arbitrary a) => Arbitrary (NonNegative a) where
   arbitrary = NonNegative <$> (arbitrary `suchThat` (>= 0))
   shrink (NonNegative x) = NonNegative <$> filter (>= 0) (shrink x)
-
-instance (Num a, Bounded a) => Bounded (NonNegative a) where
-  minBound = NonNegative 0
-  maxBound = NonNegative (maxBound :: a)
 
 instance Eq1 NonNegative where
   liftEq eq (NonNegative a) (NonNegative b) = a `eq` b
@@ -91,16 +79,6 @@ instance Ord1 NonNegative where
 
 instance Show1 NonNegative where
   liftShowsPrec shw _ p (NonNegative a) = shw p a
-
--------------------------------------------------------------------------------
--- NonZero from QuickCheck
-
-instance (Monad m, Num a, Eq a, Serial m a) => Serial m (NonZero a) where
-  series = NonZero <$> series `suchThatSerial` (/= 0)
-
-instance (Eq a, Num a, Enum a, Bounded a) => Bounded (NonZero a) where
-  minBound = if minBound == (0 :: a) then NonZero (succ minBound) else NonZero minBound
-  maxBound = if maxBound == (0 :: a) then NonZero (pred maxBound) else NonZero maxBound
 
 -------------------------------------------------------------------------------
 -- Huge
