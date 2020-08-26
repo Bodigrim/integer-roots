@@ -42,8 +42,8 @@ import Test.Tasty.QuickCheck as QC hiding (Positive(..), NonNegative(..), genera
 
 import Data.Bits
 import Data.Int
+import Data.Kind
 import Data.Word
-import GHC.Exts
 import Numeric.Natural
 
 import Math.NumberTheory.TestUtils.Wrappers
@@ -59,12 +59,12 @@ instance Arbitrary Natural where
 class    (f (g x)) => (f `Compose` g) x
 instance (f (g x)) => (f `Compose` g) x
 
-type family ConcatMap (w :: * -> Constraint) (cs :: [*]) :: Constraint
+type family ConcatMap (w :: Type -> Constraint) (cs :: [Type]) :: Constraint
   where
     ConcatMap w '[] = ()
     ConcatMap w (c ': cs) = (w c, ConcatMap w cs)
 
-type family Matrix (as :: [* -> Constraint]) (w :: * -> *) (bs :: [*]) :: Constraint
+type family Matrix (as :: [Type -> Constraint]) (w :: Type -> Type) (bs :: [Type]) :: Constraint
   where
     Matrix '[] w bs = ()
     Matrix (a ': as) w bs = (ConcatMap (a `Compose` w) bs, Matrix as w bs)
