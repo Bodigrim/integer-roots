@@ -24,7 +24,7 @@ source-repository head
 library
   build-depends:
     base >=4.9 && <5,
-    integer-gmp <1.1
+    integer-gmp <1.2
   exposed-modules:
     Math.NumberTheory.Roots
   other-modules:
