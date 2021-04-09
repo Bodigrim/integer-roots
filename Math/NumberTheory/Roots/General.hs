@@ -9,6 +9,7 @@
 --
 
 {-# LANGUAGE BangPatterns  #-}
+{-# LANGUAGE CPP           #-}
 {-# LANGUAGE MagicHash     #-}
 
 module Math.NumberTheory.Roots.General
@@ -23,6 +24,9 @@ import Data.Bits (countTrailingZeros, shiftL, shiftR)
 import Data.List (foldl', sortBy)
 import Data.Maybe (isJust)
 import GHC.Exts (Int(..), Word(..), quotInt#, int2Word#, word2Int#, int2Double#, double2Int#, isTrue#, Ptr(..), indexWord16OffAddr#, (/##), (**##), (<#), (*#), (-#), (+#))
+#if MIN_VERSION_base(4,16,0)
+import GHC.Exts (word16ToWord#)
+#endif
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger)
 import GHC.Integer.Logarithms (integerLog2#)
 import Numeric.Natural (Natural)
@@ -251,7 +255,11 @@ splitOff p n = go 0 n
 smallOddPrimes :: [Integer]
 smallOddPrimes
   = takeWhile (< spBound)
+#if MIN_VERSION_base(4,16,0)
+  $ map (\(I# k#) -> S# (word2Int# (word16ToWord# (indexWord16OffAddr# smallPrimesAddr# k#))))
+#else
   $ map (\(I# k#) -> S# (word2Int# (indexWord16OffAddr# smallPrimesAddr# k#)))
+#endif
     [1 .. smallPrimesLength - 1]
   where
     !(Ptr smallPrimesAddr#) = smallPrimesPtr
