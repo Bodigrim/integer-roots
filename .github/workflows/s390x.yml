@@ -1,0 +1,26 @@
+name: s390x
+on:
+  push: {}
+  pull_request: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: uraimo/run-on-arch-action@v2.1.1
+      with:
+        arch: s390x
+        distro: ubuntu20.04
+        githubToken: ${{ github.token }}
+        install: |
+          apt-get update -y
+          apt-get install -y ghc libghc-tasty-quickcheck-dev libghc-tasty-smallcheck-dev libghc-tasty-hunit-dev
+        run: |
+          ghc --version
+          ghc --make -itest-suite -o Test test-suite/Test.hs +RTS -s
+          ./Test +RTS -s
