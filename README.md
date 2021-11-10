@@ -1,4 +1,4 @@
-# integer-roots [![Build Status](https://github.com/Bodigrim/integer-roots/workflows/Haskell-CI/badge.svg)](https://github.com/Bodigrim/integer-roots/actions?query=workflow%3AHaskell-CI) [![Hackage](http://img.shields.io/hackage/v/integer-roots.svg)](https://hackage.haskell.org/package/integer-roots) [![Hackage CI](https://matrix.hackage.haskell.org/api/v2/packages/integer-roots/badge)](https://matrix.hackage.haskell.org/package/integer-roots) [![Stackage LTS](http://stackage.org/package/integer-roots/badge/lts)](http://stackage.org/lts/package/integer-roots) [![Stackage Nightly](http://stackage.org/package/integer-roots/badge/nightly)](http://stackage.org/nightly/package/integer-roots)
+# integer-roots [![Hackage](http://img.shields.io/hackage/v/integer-roots.svg)](https://hackage.haskell.org/package/integer-roots) [![Stackage LTS](http://stackage.org/package/integer-roots/badge/lts)](http://stackage.org/lts/package/integer-roots) [![Stackage Nightly](http://stackage.org/package/integer-roots/badge/nightly)](http://stackage.org/nightly/package/integer-roots)
 
 Calculating integer roots and testing perfect powers of arbitrary precision.
 
