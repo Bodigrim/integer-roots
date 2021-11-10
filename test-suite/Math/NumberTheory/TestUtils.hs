@@ -8,6 +8,7 @@
 --
 
 {-# LANGUAGE ConstraintKinds            #-}
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE DataKinds                  #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE FlexibleInstances          #-}
@@ -51,6 +52,22 @@ import Math.NumberTheory.TestUtils.Wrappers
 instance Arbitrary Natural where
   arbitrary = fromInteger <$> (arbitrary `suchThat` (>= 0))
   shrink = map fromInteger . filter (>= 0) . shrink . toInteger
+
+#if !MIN_VERSION_smallcheck(1,2,0)
+instance Functor NonNegative where
+  fmap f (NonNegative x) = NonNegative (f x)
+
+instance (Num a, Bounded a) => Bounded (NonNegative a) where
+  minBound = NonNegative 0
+  maxBound = NonNegative (maxBound :: a)
+
+instance Functor Positive where
+  fmap f (Positive x) = Positive (f x)
+
+instance (Num a, Bounded a) => Bounded (Positive a) where
+  minBound = Positive 1
+  maxBound = Positive (maxBound :: a)
+#endif
 
 -------------------------------------------------------------------------------
 
