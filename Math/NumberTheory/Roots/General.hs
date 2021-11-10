@@ -27,6 +27,9 @@ import GHC.Exts (Int(..), Word(..), quotInt#, int2Word#, word2Int#, int2Double#,
 #if MIN_VERSION_base(4,16,0)
 import GHC.Exts (word16ToWord#)
 #endif
+#ifdef WORDS_BIGENDIAN
+import GHC.Exts (byteSwap#)
+#endif
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger)
 import GHC.Integer.Logarithms (integerLog2#)
 import Numeric.Natural (Natural)
@@ -255,11 +258,21 @@ splitOff p n = go 0 n
 smallOddPrimes :: [Integer]
 smallOddPrimes
   = takeWhile (< spBound)
+  $ map (\(I# k#) -> S# (word2Int# (
 #if MIN_VERSION_base(4,16,0)
-  $ map (\(I# k#) -> S# (word2Int# (word16ToWord# (indexWord16OffAddr# smallPrimesAddr# k#))))
+#ifdef WORDS_BIGENDIAN
+  byteSwap16# (word16ToWord# (indexWord16OffAddr# smallPrimesAddr# k#))
 #else
-  $ map (\(I# k#) -> S# (word2Int# (indexWord16OffAddr# smallPrimesAddr# k#)))
+  word16ToWord# (indexWord16OffAddr# smallPrimesAddr# k#)
 #endif
+#else
+#ifdef WORDS_BIGENDIAN
+  byteSwap16# (indexWord16OffAddr# smallPrimesAddr# k#)
+#else
+  indexWord16OffAddr# smallPrimesAddr# k#
+#endif
+#endif
+  )))
     [1 .. smallPrimesLength - 1]
   where
     !(Ptr smallPrimesAddr#) = smallPrimesPtr

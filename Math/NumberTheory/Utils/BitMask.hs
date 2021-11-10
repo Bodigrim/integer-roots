@@ -7,6 +7,7 @@
 -- Bit mask utilities.
 --
 
+{-# LANGUAGE CPP          #-}
 {-# LANGUAGE MagicHash    #-}
 
 module Math.NumberTheory.Utils.BitMask
@@ -14,8 +15,13 @@ module Math.NumberTheory.Utils.BitMask
   -- , vectorToAddrLiteral
   ) where
 
+#include "MachDeps.h"
+
 import Data.Bits (countTrailingZeros, finiteBitSize, testBit, (.&.))
 import GHC.Exts (Int(..), Word(..), Ptr(..), iShiftRL#, indexWordOffAddr#)
+#ifdef WORDS_BIGENDIAN
+import GHC.Exts (byteSwap#)
+#endif
 
 -- import Data.Bits (unsafeShiftL)
 -- import Data.List (unfoldr)
@@ -27,7 +33,12 @@ indexBitSet (Ptr addr#) i@(I# i#) = word `testBit` (i .&. (fbs - 1))
     fbs = finiteBitSize (0 :: Word)
     logFbs# = case countTrailingZeros fbs of
       I# l# -> l#
-    word = W# (indexWordOffAddr# addr# (i# `iShiftRL#` logFbs#))
+    word# = indexWordOffAddr# addr# (i# `iShiftRL#` logFbs#)
+#ifdef WORDS_BIGENDIAN
+    word = W# (byteSwap# word#)
+#else
+    word = W# word#
+#endif
 
 -- vectorToAddrLiteral :: [Bool] -> String
 -- vectorToAddrLiteral = map (chr . toByte . padTo8) . unfoldr go
