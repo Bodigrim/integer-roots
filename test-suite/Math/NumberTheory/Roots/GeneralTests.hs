@@ -65,6 +65,16 @@ highestPowerProperty (AnySign n) = (n + 1 `elem` [0, 1, 2] && k == 3) || (b ^ k 
     (b, k) = highestPower n
     (b', k') = highestPower b
 
+highestPowerProperty2 :: Integral a => AnySign a -> Bool
+highestPowerProperty2 (AnySign n) = case k of
+  1 -> not (isSquare n) && not (isCube n)
+  2 -> isSquare n && not (isCube n)
+  3 -> n + 1 `elem` [0, 1, 2] || (not (isSquare n) && isCube n)
+  4 -> isSquare n && not (isCube n)
+  _ -> all (\l -> isKthPower l n == (k `mod` l == 0)) [1..k]
+  where
+    (_, k) = highestPower n
+
 highestPowerSpecialCases :: [Assertion]
 highestPowerSpecialCases =
   -- Freezes before d44a13b.
@@ -75,6 +85,10 @@ highestPowerSpecialCases =
   , a ( 1013582159576576 ^ 7
       , 1013582159576576
       , 7)
+
+  , a ( 9 :: Int
+      , 3
+      , 2)
 
   , a ( -2 ^ 63 :: Int
       , -2 :: Int
@@ -125,6 +139,7 @@ testSuite = testGroup "General"
   , testIntegralProperty  "isPerfectPower" isPerfectPowerProperty
   , testGroup "highestPower"
     ( testIntegralProperty  "highestPower"   highestPowerProperty
+    : testIntegralProperty  "highestPower 2" highestPowerProperty2
     : zipWith (\i a -> testCase ("special case " ++ show i) a) [1..] highestPowerSpecialCases
     )
   ]
