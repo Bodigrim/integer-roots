@@ -20,6 +20,8 @@ module Math.NumberTheory.Roots.General
     , highestPower
     ) where
 
+#include "MachDeps.h"
+
 import Data.Bits (countTrailingZeros, shiftL, shiftR)
 import Data.List (foldl', sortBy)
 import Data.Maybe (isJust)
@@ -28,7 +30,7 @@ import GHC.Exts (Int(..), Word(..), quotInt#, int2Word#, word2Int#, int2Double#,
 import GHC.Exts (word16ToWord#)
 #endif
 #ifdef WORDS_BIGENDIAN
-import GHC.Exts (byteSwap#)
+import GHC.Exts (byteSwap16#)
 #endif
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger)
 import GHC.Integer.Logarithms (integerLog2#)
