@@ -62,8 +62,6 @@ test-suite integer-roots-tests
   ghc-options: -Wall -Widentities -Wcompat
 
 test-suite integer-roots-doctests
-  if impl(ghc >= 9.2)
-    buildable: False
   type: exitcode-stdio-1.0
   main-is: Doctest.hs
   hs-source-dirs: test-suite
