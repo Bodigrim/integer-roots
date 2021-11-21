@@ -1,3 +1,7 @@
+# 1.0.2.0
+
+* More fixes for big-endian architectures.
+
 # 1.0.1.0
 
 * Fixes for big-endian architectures.

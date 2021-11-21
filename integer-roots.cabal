@@ -1,10 +1,10 @@
 name:          integer-roots
-version:       1.0.1.0
+version:       1.0.2.0
 cabal-version: >=1.10
 build-type:    Simple
 license:       MIT
 license-file:  LICENSE
-copyright:     (c) 2011 Daniel Fischer, 2016-2020 Andrew Lelechenko.
+copyright:     (c) 2011 Daniel Fischer, 2016-2021 Andrew Lelechenko.
 maintainer:    Andrew Lelechenko andrew dot lelechenko at gmail dot com
 homepage:      https://github.com/Bodigrim/integer-roots
 bug-reports:   https://github.com/Bodigrim/integer-roots/issues
