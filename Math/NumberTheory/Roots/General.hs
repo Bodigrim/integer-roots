@@ -11,6 +11,7 @@
 {-# LANGUAGE BangPatterns  #-}
 {-# LANGUAGE CPP           #-}
 {-# LANGUAGE MagicHash     #-}
+{-# LANGUAGE ViewPatterns  #-}
 
 module Math.NumberTheory.Roots.General
     ( integerRoot
@@ -25,16 +26,24 @@ module Math.NumberTheory.Roots.General
 import Data.Bits (countTrailingZeros, shiftL, shiftR)
 import Data.List (foldl', sortBy)
 import Data.Maybe (isJust)
-import GHC.Exts (Int(..), Word(..), quotInt#, int2Word#, word2Int#, int2Double#, double2Int#, isTrue#, Ptr(..), indexWord16OffAddr#, (/##), (**##), (<#), (*#), (-#), (+#))
+import GHC.Exts (Int(..), Word(..), word2Int#, int2Double#, double2Int#, isTrue#, Ptr(..), indexWord16OffAddr#, (/##), (**##))
 #if MIN_VERSION_base(4,16,0)
 import GHC.Exts (word16ToWord#)
 #endif
 #ifdef WORDS_BIGENDIAN
 import GHC.Exts (byteSwap16#)
 #endif
+import Numeric.Natural (Natural)
+
+#ifdef MIN_VERSION_integer_gmp
+import GHC.Exts (int2Word#, quotInt#, (<#), (*#), (-#), (+#))
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger)
 import GHC.Integer.Logarithms (integerLog2#)
-import Numeric.Natural (Natural)
+#define IS S#
+#else
+import GHC.Exts (plusWord#, minusWord#, timesWord#, quotWord#, ltWord#)
+import GHC.Num.Integer (Integer(..), integerLog2#, integerShiftR#, integerShiftL#)
+#endif
 
 import qualified Math.NumberTheory.Roots.Squares as P2
 import qualified Math.NumberTheory.Roots.Cubes as P3
@@ -87,7 +96,11 @@ integerRoot k n
       a  = appKthRoot (fromIntegral k) (toInteger n)
       kTooLarge = (toInteger k /= toInteger (fromIntegral k `asTypeOf` n))    -- k doesn't fit in n's type
                   || (toInteger k > toInteger (maxBound :: Int))  -- 2^k doesn't fit in Integer
+#ifdef MIN_VERSION_integer_gmp
                   || (I# (integerLog2# (toInteger n)) < fromIntegral k) -- n < 2^k
+#else
+                  || (W# (integerLog2# (toInteger n)) < fromIntegral k) -- n < 2^k
+#endif
 
 -- | For a positive exponent \( k \)
 -- calculate the exact integer \( k \)-th root of the second argument if it exists,
@@ -141,7 +154,11 @@ exactRoot k n
       ok = r^k == n
       kTooLarge = (toInteger k /= toInteger (fromIntegral k `asTypeOf` n))    -- k doesn't fit in n's type
                   || (toInteger k > toInteger (maxBound :: Int))  -- 2^k doesn't fit in Integer
+#ifdef MIN_VERSION_integer_gmp
                   || (I# (integerLog2# (toInteger n)) < fromIntegral k) -- n < 2^k
+#else
+                  || (W# (integerLog2# (toInteger n)) < fromIntegral k) -- n < 2^k
+#endif
 
 -- | For a positive exponent \( k \) test whether the second argument
 -- is a perfect \( k \)-th power.
@@ -210,7 +227,8 @@ newtonK k n a = go (step a)
 -- find an approximation to the k-th root
 -- here, k > 4 and n > 31
 appKthRoot :: Int -> Integer -> Integer
-appKthRoot (I# k#) (S# n#) = S# (double2Int# (int2Double# n# **## (1.0## /## int2Double# k#)))
+appKthRoot (I# k#) (IS n#) = IS (double2Int# (int2Double# n# **## (1.0## /## int2Double# k#)))
+#ifdef MIN_VERSION_integer_gmp
 appKthRoot k@(I# k#) n
   | k >= 256 = 1 `shiftLInteger` (integerLog2# n `quotInt#` k# +# 1#)
   | otherwise =
@@ -226,6 +244,23 @@ appKthRoot k@(I# k#) n
                  | otherwise ->
                    floor (scaleFloat 400 (fromInteger (n `shiftRInteger` (h# *# k#)) ** (1/fromIntegral k) :: Double))
                           `shiftLInteger` (h# -# 400#)
+#else
+appKthRoot k@(fromIntegral -> W# k#) n
+  | k >= 256 = 1 `integerShiftL#` (integerLog2# n `quotWord#` k# `plusWord#` 1##)
+  | otherwise =
+    case integerLog2# n of
+      l# -> case l# `quotWord#` k# of
+              0## -> 1
+              1## -> 3
+              2## -> 5
+              3## -> 11
+              h# | isTrue# (h# `ltWord#` 500##) ->
+                   floor (scaleFloat (I# (word2Int# h#))
+                          (fromInteger (n `integerShiftR#` (h# `timesWord#` k#)) ** (1/fromIntegral k) :: Double))
+                 | otherwise ->
+                   floor (scaleFloat 400 (fromInteger (n `integerShiftR#` (h# `timesWord#` k#)) ** (1/fromIntegral k) :: Double))
+                          `integerShiftL#` (h# `minusWord#` 400##)
+#endif
 
 -- assumption: argument is > 1
 integerHighPower :: Integer -> (Integer, Word)
@@ -260,7 +295,7 @@ splitOff p n = go 0 n
 smallOddPrimes :: [Integer]
 smallOddPrimes
   = takeWhile (< spBound)
-  $ map (\(I# k#) -> S# (word2Int# (
+  $ map (\(I# k#) -> IS (word2Int# (
 #if MIN_VERSION_base(4,16,0)
 #ifdef WORDS_BIGENDIAN
   byteSwap16# (word16ToWord# (indexWord16OffAddr# smallPrimesAddr# k#))
@@ -292,7 +327,11 @@ finishPower e pws n
   | e == 0  = rawPower maxExp n
   | otherwise = go divs
     where
+#ifdef MIN_VERSION_integer_gmp
       maxExp = (W# (int2Word# (integerLog2# n))) `quot` spBEx
+#else
+      maxExp = (W# (integerLog2# n)) `quot` spBEx
+#endif
       divs = divisorsTo maxExp e
       go [] = (foldl' (*) n [p^ex | (p,ex) <- pws], 1)
       go (d:ds) = case exactRoot d n of

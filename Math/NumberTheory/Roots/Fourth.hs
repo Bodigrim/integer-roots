@@ -7,6 +7,7 @@
 -- Functions dealing with fourth powers. Efficient calculation of integer fourth
 -- roots and efficient testing for being a square's square.
 
+{-# LANGUAGE CPP       #-}
 {-# LANGUAGE MagicHash #-}
 
 module Math.NumberTheory.Roots.Fourth
@@ -19,10 +20,21 @@ module Math.NumberTheory.Roots.Fourth
     ) where
 
 import Data.Bits (finiteBitSize, (.&.))
-import GHC.Exts (Int#, Ptr(..), uncheckedIShiftRA#, int2Double#, double2Int#, isTrue#, sqrtDouble#, (<#), (*#), (-#))
+import GHC.Exts (Int#, Ptr(..), int2Double#, double2Int#, isTrue#, sqrtDouble#, (<#))
+import Numeric.Natural (Natural)
+
+#ifdef MIN_VERSION_integer_gmp
+import GHC.Exts (uncheckedIShiftRA#, (*#), (-#))
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger, sizeofBigNat#)
 import GHC.Integer.Logarithms (integerLog2#)
-import Numeric.Natural (Natural)
+#define IS S#
+#define IP Jp#
+#define bigNatSize sizeofBigNat
+#else
+import GHC.Exts (uncheckedShiftRL#, minusWord#, timesWord#)
+import GHC.Num.BigNat (bigNatSize#)
+import GHC.Num.Integer (Integer(..), integerLog2#, integerShiftR#, integerShiftL#)
+#endif
 
 import Math.NumberTheory.Utils.BitMask (indexBitSet)
 
@@ -130,15 +142,22 @@ approxBiSqrt = fromInteger . appBiSqrt . fromIntegral
 -- Find a fairly good approximation to the fourth root.
 -- About 48 bits should be correct for large Integers.
 appBiSqrt :: Integer -> Integer
-appBiSqrt (S# i#) = S# (double2Int# (sqrtDouble# (sqrtDouble# (int2Double# i#))))
-appBiSqrt n@(Jp# bn#)
-    | isTrue# ((sizeofBigNat# bn#) <# thresh#) =
+appBiSqrt (IS i#) = IS (double2Int# (sqrtDouble# (sqrtDouble# (int2Double# i#))))
+appBiSqrt n@(IP bn#)
+    | isTrue# ((bigNatSize# bn#) <# thresh#) =
           floor (sqrt . sqrt $ fromInteger n :: Double)
     | otherwise = case integerLog2# n of
+#ifdef MIN_VERSION_integer_gmp
                     l# -> case uncheckedIShiftRA# l# 2# -# 47# of
                             h# -> case shiftRInteger n (4# *# h#) of
                                     m -> case floor (sqrt $ sqrt $ fromInteger m :: Double) of
                                             r -> shiftLInteger r h#
+#else
+                    l# -> case uncheckedShiftRL# l# 2# `minusWord#` 47## of
+                            h# -> case integerShiftR# n (4## `timesWord#` h#) of
+                                    m -> case floor (sqrt $ sqrt $ fromInteger m :: Double) of
+                                            r -> integerShiftL# r h#
+#endif
     where
         -- threshold for shifting vs. direct fromInteger
         -- we shift when we expect more than 256 bits

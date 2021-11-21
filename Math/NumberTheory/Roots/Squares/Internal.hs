@@ -7,6 +7,7 @@
 -- Internal functions dealing with square roots. End-users should not import this module.
 
 {-# LANGUAGE BangPatterns     #-}
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE MagicHash        #-}
 
 module Math.NumberTheory.Roots.Squares.Internal
@@ -16,9 +17,19 @@ module Math.NumberTheory.Roots.Squares.Internal
 
 import Data.Bits (finiteBitSize, unsafeShiftL, unsafeShiftR, (.&.), (.|.))
 
-import GHC.Exts (Int(..), Int#, uncheckedIShiftRA#, isTrue#, int2Double#, sqrtDouble#, double2Int#, (<#), (*#), (-#))
+import GHC.Exts (Int(..), Int#, isTrue#, int2Double#, sqrtDouble#, double2Int#, (<#))
+#ifdef MIN_VERSION_integer_gmp
+import GHC.Exts (uncheckedIShiftRA#, (*#), (-#))
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger, sizeofBigNat#)
 import GHC.Integer.Logarithms (integerLog2#)
+#define IS S#
+#define IP Jp#
+#define bigNatSize sizeofBigNat
+#else
+import GHC.Exts (uncheckedShiftRL#, word2Int#, minusWord#, timesWord#)
+import GHC.Num.BigNat (bigNatSize#)
+import GHC.Num.Integer (Integer(..), integerLog2#, integerShiftR#, integerShiftL#)
+#endif
 
 -- Find approximation to square root in 'Integer', then
 -- find the integer square root by the integer variant
@@ -47,15 +58,22 @@ heron n a = go (step a)
 -- At most one off for small Integers, about 48 bits should be correct
 -- for large Integers.
 appSqrt :: Integer -> Integer
-appSqrt (S# i#) = S# (double2Int# (sqrtDouble# (int2Double# i#)))
-appSqrt n@(Jp# bn#)
-    | isTrue# ((sizeofBigNat# bn#) <# thresh#) =
+appSqrt (IS i#) = IS (double2Int# (sqrtDouble# (int2Double# i#)))
+appSqrt n@(IP bn#)
+    | isTrue# ((bigNatSize# bn#) <# thresh#) =
           floor (sqrt $ fromInteger n :: Double)
     | otherwise = case integerLog2# n of
+#ifdef MIN_VERSION_integer_gmp
                     l# -> case uncheckedIShiftRA# l# 1# -# 47# of
                             h# -> case shiftRInteger n (2# *# h#) of
                                     m -> case floor (sqrt $ fromInteger m :: Double) of
                                             r -> shiftLInteger r h#
+#else
+                    l# -> case uncheckedShiftRL# l# 1# `minusWord#` 47## of
+                            h# -> case integerShiftR# n (2## `timesWord#` h#) of
+                                    m -> case floor (sqrt $ fromInteger m :: Double) of
+                                            r -> integerShiftL# r h#
+#endif
     where
         -- threshold for shifting vs. direct fromInteger
         -- we shift when we expect more than 256 bits
@@ -90,7 +108,11 @@ karatsubaSqrt n
             in  (s `unsafeShiftR` 1, r' `unsafeShiftR` 2)
   where
     k = lgN `unsafeShiftR` 2 + 1
+#ifdef MIN_VERSION_integer_gmp
     lgN = I# (integerLog2# n)
+#else
+    lgN = I# (word2Int# (integerLog2# n))
+#endif
 
 karatsubaStep :: Int -> (Integer, Integer, Integer, Integer) -> (Integer, Integer)
 karatsubaStep k (a3, a2, a1, a0)

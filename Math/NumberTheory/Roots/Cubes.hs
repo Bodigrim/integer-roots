@@ -8,6 +8,7 @@
 -- cube roots and testing for cubeness.
 
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE CPP          #-}
 {-# LANGUAGE MagicHash    #-}
 
 module Math.NumberTheory.Roots.Cubes
@@ -20,10 +21,21 @@ module Math.NumberTheory.Roots.Cubes
     ) where
 
 import Data.Bits (finiteBitSize, (.&.))
-import GHC.Exts (Int#, Ptr(..), quotInt#, int2Double#, double2Int#, isTrue#, (/##), (**##), (<#), (*#), (-#))
+import GHC.Exts (Int#, Ptr(..), int2Double#, double2Int#, isTrue#, (/##), (**##), (<#))
+import Numeric.Natural (Natural)
+
+#ifdef MIN_VERSION_integer_gmp
+import GHC.Exts (quotInt#, (*#), (-#))
 import GHC.Integer.GMP.Internals (Integer(..), shiftLInteger, shiftRInteger, sizeofBigNat#)
 import GHC.Integer.Logarithms (integerLog2#)
-import Numeric.Natural (Natural)
+#define IS S#
+#define IP Jp#
+#define bigNatSize sizeofBigNat
+#else
+import GHC.Exts (minusWord#, timesWord#, quotWord#)
+import GHC.Num.BigNat (bigNatSize#)
+import GHC.Num.Integer (Integer(..), integerLog2#, integerShiftR#, integerShiftL#)
+#endif
 
 import Math.NumberTheory.Utils.BitMask (indexBitSet)
 
@@ -197,16 +209,23 @@ approxCuRt n = fromInteger $ appCuRt (fromIntegral n)
 
 -- | approximate cube root, about 50 bits should be correct for large numbers
 appCuRt :: Integer -> Integer
-appCuRt (S# i#) = case double2Int# (int2Double# i# **## (1.0## /## 3.0##)) of
-                    r# -> S# r#
-appCuRt n@(Jp# bn#)
-    | isTrue# ((sizeofBigNat# bn#) <# thresh#) =
+appCuRt (IS i#) = case double2Int# (int2Double# i# **## (1.0## /## 3.0##)) of
+                    r# -> IS r#
+appCuRt n@(IP bn#)
+    | isTrue# ((bigNatSize# bn#) <# thresh#) =
           floor (fromInteger n ** (1.0/3.0) :: Double)
     | otherwise = case integerLog2# n of
+#ifdef MIN_VERSION_integer_gmp
                     l# -> case (l# `quotInt#` 3#) -# 51# of
                             h# -> case shiftRInteger n (3# *# h#) of
                                     m -> case floor (fromInteger m ** (1.0/3.0) :: Double) of
                                            r -> shiftLInteger r h#
+#else
+                    l# -> case (l# `quotWord#` 3##) `minusWord#` 51## of
+                            h# -> case integerShiftR# n (3## `timesWord#` h#) of
+                                    m -> case floor (fromInteger m ** (1.0/3.0) :: Double) of
+                                            r -> integerShiftL# r h#
+#endif
     where
         -- threshold for shifting vs. direct fromInteger
         -- we shift when we expect more than 256 bits
