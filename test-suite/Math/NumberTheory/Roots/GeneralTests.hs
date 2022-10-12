@@ -13,6 +13,7 @@ module Math.NumberTheory.Roots.GeneralTests
   ( testSuite
   ) where
 
+import Data.Bits
 import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck as QC
@@ -90,9 +91,9 @@ highestPowerSpecialCases =
       , 3
       , 2)
 
-  , a ( -2 ^ 63 :: Int
+  , a ( minBound :: Int
       , -2 :: Int
-      , 63)
+      , fromIntegral (finiteBitSize (0 :: Int) - 1))
 
   , a ( (2 ^ 63 - 1) ^ 21
       , 2 ^ 63 - 1
