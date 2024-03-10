@@ -11,8 +11,8 @@ jobs:
   s390x:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: uraimo/run-on-arch-action@v2.1.1
+    - uses: actions/checkout@v3
+    - uses: uraimo/run-on-arch-action@v2.7.1
       with:
         arch: s390x
         distro: ubuntu20.04
@@ -28,8 +28,8 @@ jobs:
   armv7:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: uraimo/run-on-arch-action@v2.1.1
+    - uses: actions/checkout@v3
+    - uses: uraimo/run-on-arch-action@v2.7.1
       with:
         arch: armv7
         distro: ubuntu20.04
@@ -45,8 +45,8 @@ jobs:
   aarch64:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: uraimo/run-on-arch-action@v2.1.1
+    - uses: actions/checkout@v3
+    - uses: uraimo/run-on-arch-action@v2.7.1
       with:
         arch: aarch64
         distro: ubuntu20.04
@@ -54,7 +54,7 @@ jobs:
         install: |
           apt-get update -y
           apt-get install -y build-essential curl libgmp-dev libnuma-dev
-          curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh
+          curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
         run: |
           source ~/.ghcup/env
           cabal v2-test all --test-show-details=direct
@@ -68,7 +68,7 @@ jobs:
       run: |
         apt-get update -y
         apt-get install -y build-essential curl libgmp-dev
-        curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh
+        curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
     - uses: actions/checkout@v1
     - name: Test
       run: |
