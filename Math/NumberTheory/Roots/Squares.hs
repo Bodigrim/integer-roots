@@ -57,6 +57,7 @@ integerSquareRoot n
 "integerSquareRoot'/Int"     integerSquareRoot' = isqrtInt'
 "integerSquareRoot'/Word"    integerSquareRoot' = isqrtWord
 "integerSquareRoot'/Integer" integerSquareRoot' = isqrtInteger
+"integerSquareRoot'/Natural" integerSquareRoot' = fromInteger . isqrtInteger . toInteger
   #-}
 {-# INLINE [1] integerSquareRoot' #-}
 integerSquareRoot' :: Integral a => a -> a
