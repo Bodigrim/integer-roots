@@ -23,8 +23,10 @@ module Math.NumberTheory.Roots.General
 
 #include "MachDeps.h"
 
+import Prelude hiding (Foldable(..))
 import Data.Bits (countTrailingZeros, shiftL, shiftR)
-import Data.List (foldl', sortBy)
+import Data.Foldable (Foldable(..))
+import Data.List (sortBy)
 import Data.Maybe (isJust)
 import GHC.Exts (Int(..), Word(..), word2Int#, int2Double#, double2Int#, isTrue#, Ptr(..), indexWord16OffAddr#, (/##), (**##))
 #if MIN_VERSION_base(4,16,0)
