@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: uraimo/run-on-arch-action@v2.7.1
+    - uses: uraimo/run-on-arch-action@v3
       with:
         arch: s390x
         distro: ubuntu20.04
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: uraimo/run-on-arch-action@v2.7.1
+    - uses: uraimo/run-on-arch-action@v3
       with:
         arch: armv7
         distro: ubuntu20.04
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: uraimo/run-on-arch-action@v2.7.1
+    - uses: uraimo/run-on-arch-action@v3
       with:
         arch: aarch64
         distro: ubuntu20.04
