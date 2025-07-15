@@ -7,14 +7,14 @@ Calculating integer roots and testing perfect powers of arbitrary precision.
 The [integer square root](https://en.wikipedia.org/wiki/Integer_square_root)
 (`integerSquareRoot`)
 of a non-negative integer
-_n_
+$n$
 is the greatest integer
-_m_
+$m$
 such that
-<img src="https://render.githubusercontent.com/render/math?math=m\le\sqrt{n}">.
+$m\le\sqrt{n}$.
 Alternatively, in terms of the
 [floor function](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions),
-<img src="https://render.githubusercontent.com/render/math?math=m = \lfloor\sqrt{n}\rfloor">.
+$m = \lfloor\sqrt{n}\rfloor$.
 
 For example,
 
@@ -57,9 +57,9 @@ without intermediate `Double`s.
 The integer cube root
 (`integerCubeRoot`)
 of an integer
-_n_
+$n$
 equals to
-<img src="https://render.githubusercontent.com/render/math?math=\lfloor\sqrt[3]{n}\rfloor">.
+$\lfloor\sqrt[3]{n}\rfloor$.
 
 Again, a naive approach is to implement `integerCubeRoot`
 via `Double`-typed computations:
@@ -88,7 +88,7 @@ which computes roots by
 In spirit of `integerSquareRoot` and `integerCubeRoot` this library
 covers the general case as well, providing
 `integerRoot :: (Integral a, Integral b) => b -> a -> a`
-to compute integer _k_-th roots of arbitrary precision.
+to compute integer $k$-th roots of arbitrary precision.
 
 There is also `highestPower` routine, which tries hard to represent
 its input as a power with as large exponent as possible. This is a useful function
