@@ -1,3 +1,7 @@
+# 1.0.3.0
+
+* Add a rewrite rule for `integerSquareRoot` of `Natural`.
+
 # 1.0.2.0
 
 * More fixes for big-endian architectures.
