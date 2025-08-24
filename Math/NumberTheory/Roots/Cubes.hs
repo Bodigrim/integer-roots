@@ -120,7 +120,7 @@ isCube n
 -- | Test whether a nonnegative integer is a cube.
 --   Before 'integerCubeRoot' is calculated, a few tests
 --   of remainders modulo small primes weed out most non-cubes.
---   For testing many numbers, most of which aren't cubes,
+--   On average, assuming that the majority of inputs aren't cubes,
 --   this is much faster than @let r = cubeRoot n in r*r*r == n@.
 --   The condition @n >= 0@ is /not/ checked.
 {-# SPECIALISE isCube' :: Int -> Bool,

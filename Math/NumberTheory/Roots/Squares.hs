@@ -128,8 +128,8 @@ isSquare :: Integral a => a -> Bool
 isSquare n = n >= 0 && isSquare' n
 
 -- | Test whether the input (a non-negative number) @n@ is a square.
---   The same as 'isSquare', but without the negativity test.
---   Faster if many known positive numbers are tested.
+--   The same as 'isSquare', but without the negativity test,
+--   so marginally faster.
 --
 --   The precondition @n >= 0@ is not tested, passing negative
 --   arguments may cause any kind of havoc.
