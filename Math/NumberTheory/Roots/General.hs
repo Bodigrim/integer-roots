@@ -68,17 +68,16 @@ import Math.NumberTheory.Utils.FromIntegral (wordToInt)
 -- -5
 -- >>> integerRoot 1 5
 -- 5
-{-# SPECIALISE integerRoot :: Int -> Int -> Int,
-                              Int -> Word -> Word,
-                              Int -> Integer -> Integer,
-                              Int -> Natural -> Natural,
-                              Word -> Int -> Int,
-                              Word -> Word -> Word,
-                              Word -> Integer -> Integer,
-                              Word -> Natural -> Natural,
-                              Integer -> Integer -> Integer,
-                              Natural -> Natural -> Natural
-  #-}
+{-# SPECIALISE integerRoot :: Int -> Int -> Int #-}
+{-# SPECIALISE integerRoot :: Int -> Word -> Word #-}
+{-# SPECIALISE integerRoot :: Int -> Integer -> Integer #-}
+{-# SPECIALISE integerRoot :: Int -> Natural -> Natural #-}
+{-# SPECIALISE integerRoot :: Word -> Int -> Int #-}
+{-# SPECIALISE integerRoot :: Word -> Word -> Word #-}
+{-# SPECIALISE integerRoot :: Word -> Integer -> Integer #-}
+{-# SPECIALISE integerRoot :: Word -> Natural -> Natural #-}
+{-# SPECIALISE integerRoot :: Integer -> Integer -> Integer #-}
+{-# SPECIALISE integerRoot :: Natural -> Natural -> Natural #-}
 integerRoot :: (Integral a, Integral b) => b -> a -> a
 integerRoot 1 n         = n
 integerRoot 2 n         = P2.integerSquareRoot n
@@ -89,7 +88,7 @@ integerRoot k n
   | n < 0 && even k   = error "integerRoot: negative radicand for even exponent"
   | n < 0             =
     let r = negate . fromInteger . integerRoot k . negate $ fromIntegral n
-    in if r^k == n then r else (r-1)
+    in if r^k == n then r else r - 1
   | n == 0            = 0
   | n < 31            = 1
   | kTooLarge         = 1
@@ -332,7 +331,7 @@ finishPower e pws n
 #ifdef MIN_VERSION_integer_gmp
       maxExp = (W# (int2Word# (integerLog2# n))) `quot` spBEx
 #else
-      maxExp = (W# (integerLog2# n)) `quot` spBEx
+      maxExp = W# (integerLog2# n) `quot` spBEx
 #endif
       divs = divisorsTo maxExp e
       go [] = (foldl' (*) n [p^ex | (p,ex) <- pws], 1)

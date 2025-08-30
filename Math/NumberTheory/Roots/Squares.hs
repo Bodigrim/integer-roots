@@ -40,11 +40,10 @@ import Math.NumberTheory.Utils.BitMask (indexBitSet)
 -- 10
 -- >>> integerSquareRoot 101
 -- 10
-{-# SPECIALISE integerSquareRoot :: Int -> Int,
-                                    Word -> Word,
-                                    Integer -> Integer,
-                                    Natural -> Natural
-  #-}
+{-# SPECIALISE integerSquareRoot :: Int -> Int #-}
+{-# SPECIALISE integerSquareRoot :: Word -> Word #-}
+{-# SPECIALISE integerSquareRoot :: Integer -> Integer #-}
+{-# SPECIALISE integerSquareRoot :: Natural -> Natural #-}
 integerSquareRoot :: Integral a => a -> a
 integerSquareRoot n
   | n < 0       = error "integerSquareRoot: negative argument"
@@ -74,12 +73,10 @@ integerSquareRoot' = isqrtA
 -- (10,0)
 -- >>> integerSquareRootRem 101
 -- (10,1)
-{-# SPECIALISE integerSquareRootRem ::
-        Int -> (Int, Int),
-        Word -> (Word, Word),
-        Integer -> (Integer, Integer),
-        Natural -> (Natural, Natural)
-  #-}
+{-# SPECIALISE integerSquareRootRem :: Int -> (Int, Int) #-}
+{-# SPECIALISE integerSquareRootRem :: Word -> (Word, Word) #-}
+{-# SPECIALISE integerSquareRootRem :: Integer -> (Integer, Integer) #-}
+{-# SPECIALISE integerSquareRootRem :: Natural -> (Natural, Natural) #-}
 integerSquareRootRem :: Integral a => a -> (a, a)
 integerSquareRootRem n
   | n < 0       = error "integerSquareRootRem: negative argument"
@@ -103,11 +100,10 @@ integerSquareRootRem' n = (s, n - s * s)
 --
 -- >>> map exactSquareRoot [-100, 99, 100, 101]
 -- [Nothing,Nothing,Just 10,Nothing]
-{-# SPECIALISE exactSquareRoot :: Int -> Maybe Int,
-                                  Word -> Maybe Word,
-                                  Integer -> Maybe Integer,
-                                  Natural -> Maybe Natural
-  #-}
+{-# SPECIALISE exactSquareRoot :: Int -> Maybe Int #-}
+{-# SPECIALISE exactSquareRoot :: Word -> Maybe Word #-}
+{-# SPECIALISE exactSquareRoot :: Integer -> Maybe Integer #-}
+{-# SPECIALISE exactSquareRoot :: Natural -> Maybe Natural #-}
 exactSquareRoot :: Integral a => a -> Maybe a
 exactSquareRoot n
   | n >= 0
@@ -119,11 +115,10 @@ exactSquareRoot n
 --
 -- >>> map isSquare [-100, 99, 100, 101]
 -- [False,False,True,False]
-{-# SPECIALISE isSquare :: Int -> Bool,
-                           Word -> Bool,
-                           Integer -> Bool,
-                           Natural -> Bool
-  #-}
+{-# SPECIALISE isSquare :: Int -> Bool #-}
+{-# SPECIALISE isSquare :: Word -> Bool #-}
+{-# SPECIALISE isSquare :: Integer -> Bool #-}
+{-# SPECIALISE isSquare :: Natural -> Bool #-}
 isSquare :: Integral a => a -> Bool
 isSquare n = n >= 0 && isSquare' n
 
@@ -133,11 +128,10 @@ isSquare n = n >= 0 && isSquare' n
 --
 --   The precondition @n >= 0@ is not tested, passing negative
 --   arguments may cause any kind of havoc.
-{-# SPECIALISE isSquare' :: Int -> Bool,
-                            Word -> Bool,
-                            Integer -> Bool,
-                            Natural -> Bool
-  #-}
+{-# SPECIALISE isSquare' :: Int -> Bool #-}
+{-# SPECIALISE isSquare' :: Word -> Bool #-}
+{-# SPECIALISE isSquare' :: Integer -> Bool #-}
+{-# SPECIALISE isSquare' :: Natural -> Bool #-}
 isSquare' :: Integral a => a -> Bool
 isSquare' n
     | isPossibleSquare n
@@ -152,11 +146,10 @@ isSquare' n
 --   easily without division and eliminates about 82% of all numbers).
 --   After that, the remainders modulo 9, 25, 7, 11 and 13 are tested
 --   to eliminate altogether about 99.436% of all numbers.
-{-# SPECIALISE isPossibleSquare :: Int -> Bool,
-                                   Word -> Bool,
-                                   Integer -> Bool,
-                                   Natural -> Bool
-  #-}
+{-# SPECIALISE isPossibleSquare :: Int -> Bool #-}
+{-# SPECIALISE isPossibleSquare :: Word -> Bool #-}
+{-# SPECIALISE isPossibleSquare :: Integer -> Bool #-}
+{-# SPECIALISE isPossibleSquare :: Natural -> Bool #-}
 isPossibleSquare :: Integral a => a -> Bool
 isPossibleSquare n'
   =  indexBitSet mask256 (fromInteger (n .&. 255))

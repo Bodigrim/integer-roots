@@ -47,11 +47,10 @@ import Math.NumberTheory.Utils.BitMask (indexBitSet)
 -- [1,2,2]
 -- >>> map integerCubeRoot [-7, -8, -9]
 -- [-2,-2,-3]
-{-# SPECIALISE integerCubeRoot :: Int -> Int,
-                                  Word -> Word,
-                                  Integer -> Integer,
-                                  Natural -> Natural
-  #-}
+{-# SPECIALISE integerCubeRoot :: Int -> Int #-}
+{-# SPECIALISE integerCubeRoot :: Word -> Word #-}
+{-# SPECIALISE integerCubeRoot :: Integer -> Integer #-}
+{-# SPECIALISE integerCubeRoot :: Natural -> Natural #-}
 integerCubeRoot :: Integral a => a -> a
 integerCubeRoot 0 = 0
 integerCubeRoot n
@@ -61,7 +60,7 @@ integerCubeRoot n
           r = if m < 0
                 then negate . fromInteger $ integerCubeRoot' (negate $ fromIntegral n)
                 else negate (integerCubeRoot' m)
-      in if r*r*r == n then r else (r-1)
+      in if r*r*r == n then r else r - 1
 
 -- | Calculate the integer cube root of a nonnegative integer @n@,
 --   that is, the largest integer @r@ such that @r^3 <= n@.
@@ -81,11 +80,10 @@ integerCubeRoot' n = newton3 n (approxCuRt n)
 --
 -- >>> map exactCubeRoot [-9, -8, -7, 7, 8, 9]
 -- [Nothing,Just (-2),Nothing,Nothing,Just 2,Nothing]
-{-# SPECIALISE exactCubeRoot :: Int -> Maybe Int,
-                                Word -> Maybe Word,
-                                Integer -> Maybe Integer,
-                                Natural -> Maybe Natural
-  #-}
+{-# SPECIALISE exactCubeRoot :: Int -> Maybe Int #-}
+{-# SPECIALISE exactCubeRoot :: Word -> Maybe Word #-}
+{-# SPECIALISE exactCubeRoot :: Integer -> Maybe Integer #-}
+{-# SPECIALISE exactCubeRoot :: Natural -> Maybe Natural #-}
 exactCubeRoot :: Integral a => a -> Maybe a
 exactCubeRoot 0 = Just 0
 exactCubeRoot n
@@ -103,11 +101,10 @@ exactCubeRoot n
 --
 -- >>> map isCube [-9, -8, -7, 7, 8, 9]
 -- [False,True,False,False,True,False]
-{-# SPECIALISE isCube :: Int -> Bool,
-                         Word -> Bool,
-                         Integer -> Bool,
-                         Natural -> Bool
-  #-}
+{-# SPECIALISE isCube :: Int -> Bool #-}
+{-# SPECIALISE isCube :: Word -> Bool #-}
+{-# SPECIALISE isCube :: Integer -> Bool #-}
+{-# SPECIALISE isCube :: Natural -> Bool #-}
 isCube :: Integral a => a -> Bool
 isCube 0 = True
 isCube n
@@ -123,11 +120,10 @@ isCube n
 --   On average, assuming that the majority of inputs aren't cubes,
 --   this is much faster than @let r = cubeRoot n in r*r*r == n@.
 --   The condition @n >= 0@ is /not/ checked.
-{-# SPECIALISE isCube' :: Int -> Bool,
-                          Word -> Bool,
-                          Integer -> Bool,
-                          Natural -> Bool
-  #-}
+{-# SPECIALISE isCube' :: Int -> Bool #-}
+{-# SPECIALISE isCube' :: Word -> Bool #-}
+{-# SPECIALISE isCube' :: Integer -> Bool #-}
+{-# SPECIALISE isCube' :: Natural -> Bool #-}
 isCube' :: Integral a => a -> Bool
 isCube' !n = isPossibleCube n
              && (r*r*r == n)
@@ -137,11 +133,10 @@ isCube' !n = isPossibleCube n
 -- | Test whether a nonnegative number is possibly a cube.
 --   Only about 0.08% of all numbers pass this test.
 --   The precondition @n >= 0@ is /not/ checked.
-{-# SPECIALISE isPossibleCube :: Int -> Bool,
-                                 Word -> Bool,
-                                 Integer -> Bool,
-                                 Natural -> Bool
-  #-}
+{-# SPECIALISE isPossibleCube :: Int -> Bool #-}
+{-# SPECIALISE isPossibleCube :: Word -> Bool #-}
+{-# SPECIALISE isPossibleCube :: Integer -> Bool #-}
+{-# SPECIALISE isPossibleCube :: Natural -> Bool #-}
 isPossibleCube :: Integral a => a -> Bool
 isPossibleCube n'
   =  indexBitSet mask512 (fromInteger (n .&. 511))

@@ -41,11 +41,10 @@ import Math.NumberTheory.Utils.BitMask (indexBitSet)
 -- | Calculate the integer fourth root of a nonnegative number,
 --   that is, the largest integer @r@ with @r^4 <= n@.
 --   Throws an error on negaitve input.
-{-# SPECIALISE integerFourthRoot :: Int -> Int,
-                                    Word -> Word,
-                                    Integer -> Integer,
-                                    Natural -> Natural
-  #-}
+{-# SPECIALISE integerFourthRoot :: Int -> Int #-}
+{-# SPECIALISE integerFourthRoot :: Word -> Word #-}
+{-# SPECIALISE integerFourthRoot :: Integer -> Integer #-}
+{-# SPECIALISE integerFourthRoot :: Natural -> Natural #-}
 integerFourthRoot :: Integral a => a -> a
 integerFourthRoot n
     | n < 0     = error "integerFourthRoot: negative argument"
@@ -66,11 +65,10 @@ integerFourthRoot' n = newton4 n (approxBiSqrt n)
 
 -- | Returns @Nothing@ if @n@ is not a fourth power,
 --   @Just r@ if @n == r^4@ and @r >= 0@.
-{-# SPECIALISE exactFourthRoot :: Int -> Maybe Int,
-                                  Word -> Maybe Word,
-                                  Integer -> Maybe Integer,
-                                  Natural -> Maybe Natural
-  #-}
+{-# SPECIALISE exactFourthRoot :: Int -> Maybe Int #-}
+{-# SPECIALISE exactFourthRoot :: Word -> Maybe Word #-}
+{-# SPECIALISE exactFourthRoot :: Integer -> Maybe Integer #-}
+{-# SPECIALISE exactFourthRoot :: Natural -> Maybe Natural #-}
 exactFourthRoot :: Integral a => a -> Maybe a
 exactFourthRoot 0 = Just 0
 exactFourthRoot n
@@ -84,11 +82,10 @@ exactFourthRoot n
 -- | Test whether an integer is a fourth power.
 --   First nonnegativity is checked, then the unchecked
 --   test is called.
-{-# SPECIALISE isFourthPower :: Int -> Bool,
-                                Word -> Bool,
-                                Integer -> Bool,
-                                Natural -> Bool
-  #-}
+{-# SPECIALISE isFourthPower :: Int -> Bool #-}
+{-# SPECIALISE isFourthPower :: Word -> Bool #-}
+{-# SPECIALISE isFourthPower :: Integer -> Bool #-}
+{-# SPECIALISE isFourthPower :: Natural -> Bool #-}
 isFourthPower :: Integral a => a -> Bool
 isFourthPower 0 = True
 isFourthPower n = n > 0 && isFourthPower' n
@@ -97,11 +94,10 @@ isFourthPower n = n > 0 && isFourthPower' n
 --   The condition is /not/ checked. If a number passes the
 --   'isPossibleFourthPower' test, its integer fourth root
 --   is calculated.
-{-# SPECIALISE isFourthPower' :: Int -> Bool,
-                                 Word -> Bool,
-                                 Integer -> Bool,
-                                 Natural -> Bool
-  #-}
+{-# SPECIALISE isFourthPower' :: Int -> Bool #-}
+{-# SPECIALISE isFourthPower' :: Word -> Bool #-}
+{-# SPECIALISE isFourthPower' :: Integer -> Bool #-}
+{-# SPECIALISE isFourthPower' :: Natural -> Bool #-}
 isFourthPower' :: Integral a => a -> Bool
 isFourthPower' n = isPossibleFourthPower n && r2*r2 == n
   where
@@ -111,11 +107,10 @@ isFourthPower' n = isPossibleFourthPower n && r2*r2 == n
 -- | Test whether a nonnegative number is a possible fourth power.
 --   The condition is /not/ checked.
 --   This eliminates about 99.958% of numbers.
-{-# SPECIALISE isPossibleFourthPower :: Int -> Bool,
-                                        Word -> Bool,
-                                        Integer -> Bool,
-                                        Natural -> Bool
-  #-}
+{-# SPECIALISE isPossibleFourthPower :: Int -> Bool #-}
+{-# SPECIALISE isPossibleFourthPower :: Word -> Bool #-}
+{-# SPECIALISE isPossibleFourthPower :: Integer -> Bool #-}
+{-# SPECIALISE isPossibleFourthPower :: Natural -> Bool #-}
 isPossibleFourthPower :: Integral a => a -> Bool
 isPossibleFourthPower n'
   =  indexBitSet mask256 (fromInteger (n .&. 255))
@@ -144,7 +139,7 @@ approxBiSqrt = fromInteger . appBiSqrt . fromIntegral
 appBiSqrt :: Integer -> Integer
 appBiSqrt (IS i#) = IS (double2Int# (sqrtDouble# (sqrtDouble# (int2Double# i#))))
 appBiSqrt n@(IP bn#)
-    | isTrue# ((bigNatSize# bn#) <# thresh#) =
+    | isTrue# (bigNatSize# bn# <# thresh#) =
           floor (sqrt . sqrt $ fromInteger n :: Double)
     | otherwise = case integerLog2# n of
 #ifdef MIN_VERSION_integer_gmp
